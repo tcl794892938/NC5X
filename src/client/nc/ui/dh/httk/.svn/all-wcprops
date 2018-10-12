@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/yrnccode/!svn/ver/160/dahuan1_project/src/client/nc/ui/dh/httk
+END
+AbstractClientUI.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/yrnccode/!svn/ver/160/dahuan1_project/src/client/nc/ui/dh/httk/AbstractClientUI.java
+END
+AbstractMyDelegator.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/yrnccode/!svn/ver/160/dahuan1_project/src/client/nc/ui/dh/httk/AbstractMyDelegator.java
+END
+ClientUICtrl.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/yrnccode/!svn/ver/160/dahuan1_project/src/client/nc/ui/dh/httk/ClientUICtrl.java
+END
+ClientUICheckRule.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/yrnccode/!svn/ver/160/dahuan1_project/src/client/nc/ui/dh/httk/ClientUICheckRule.java
+END
+MyEventHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/yrnccode/!svn/ver/160/dahuan1_project/src/client/nc/ui/dh/httk/MyEventHandler.java
+END
+AbstractMyEventHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/yrnccode/!svn/ver/160/dahuan1_project/src/client/nc/ui/dh/httk/AbstractMyEventHandler.java
+END
+ClientUI.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/yrnccode/!svn/ver/160/dahuan1_project/src/client/nc/ui/dh/httk/ClientUI.java
+END
+MyDelegator.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/yrnccode/!svn/ver/160/dahuan1_project/src/client/nc/ui/dh/httk/MyDelegator.java
+END

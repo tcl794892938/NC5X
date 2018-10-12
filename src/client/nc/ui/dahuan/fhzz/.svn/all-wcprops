@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/yrnccode/!svn/ver/1623/dahuan1_project/src/client/nc/ui/dahuan/fhzz
+END
+AbstractClientUI.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/yrnccode/!svn/ver/321/dahuan1_project/src/client/nc/ui/dahuan/fhzz/AbstractClientUI.java
+END
+AbstractMyDelegator.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/yrnccode/!svn/ver/160/dahuan1_project/src/client/nc/ui/dahuan/fhzz/AbstractMyDelegator.java
+END
+ClientUICtrl.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/yrnccode/!svn/ver/321/dahuan1_project/src/client/nc/ui/dahuan/fhzz/ClientUICtrl.java
+END
+ClientUICheckRule.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/yrnccode/!svn/ver/160/dahuan1_project/src/client/nc/ui/dahuan/fhzz/ClientUICheckRule.java
+END
+DeliveryDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/yrnccode/!svn/ver/160/dahuan1_project/src/client/nc/ui/dahuan/fhzz/DeliveryDialog.java
+END
+RefXmNameModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/yrnccode/!svn/ver/1543/dahuan1_project/src/client/nc/ui/dahuan/fhzz/RefXmNameModel.java
+END
+MyEventHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/yrnccode/!svn/ver/1623/dahuan1_project/src/client/nc/ui/dahuan/fhzz/MyEventHandler.java
+END
+AbstractMyEventHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/yrnccode/!svn/ver/160/dahuan1_project/src/client/nc/ui/dahuan/fhzz/AbstractMyEventHandler.java
+END
+RefContractModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/yrnccode/!svn/ver/1543/dahuan1_project/src/client/nc/ui/dahuan/fhzz/RefContractModel.java
+END
+ClientUI.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/yrnccode/!svn/ver/1623/dahuan1_project/src/client/nc/ui/dahuan/fhzz/ClientUI.java
+END
+MyDelegator.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/yrnccode/!svn/ver/160/dahuan1_project/src/client/nc/ui/dahuan/fhzz/MyDelegator.java
+END

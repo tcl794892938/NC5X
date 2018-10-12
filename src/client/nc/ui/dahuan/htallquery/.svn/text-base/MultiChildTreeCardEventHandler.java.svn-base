@@ -1,0 +1,196 @@
+/*
+ *
+ * TODO 要更改此生成的文件的模板，请转至
+ * 窗口 － 首选项 － Java － 代码样式 － 代码模板
+ */
+package nc.ui.dahuan.htallquery;
+
+import java.util.Enumeration;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+
+import nc.bs.framework.common.NCLocator;
+import nc.itf.dahuan.pf.IdhServer;
+import nc.itf.uap.IUAPQueryBS;
+import nc.jdbc.framework.processor.ColumnProcessor;
+import nc.ui.bfriend.button.IdhButton;
+import nc.ui.demo.tree.tree03.DocumentManagerHT;
+import nc.ui.pub.ClientEnvironment;
+import nc.ui.pub.beans.UIDialog;
+import nc.ui.pub.bill.BillCardLayout;
+import nc.ui.pub.bill.BillCardPanel;
+import nc.ui.trade.bill.BillTemplateWrapper;
+import nc.ui.trade.bill.ICardController;
+import nc.ui.trade.button.IBillButton;
+import nc.ui.trade.manage.BillManageUI;
+import nc.ui.trade.pub.TableTreeNode;
+import nc.ui.trade.pub.VOTreeNode;
+import nc.ui.trade.query.INormalQuery;
+import nc.ui.trade.treemanage.BillTreeManageUI;
+import nc.ui.trade.treemanage.TreeManageEventHandler;
+import nc.vo.dahuan.cttreebill.DhContractVO;
+import nc.vo.pub.AggregatedValueObject;
+import nc.vo.pub.CircularlyAccessibleValueObject;
+
+/**
+ * 
+ * TODO 要更改此生成的类型注释的模板，请转至 窗口 － 首选项 － Java － 代码样式 － 代码模板
+ */
+public class MultiChildTreeCardEventHandler extends TreeManageEventHandler {
+
+	IdhServer pfserver = (IdhServer)NCLocator.getInstance().lookup(IdhServer.class);
+	IUAPQueryBS iQuery = (IUAPQueryBS)NCLocator.getInstance().lookup(IUAPQueryBS.class);
+	
+	public MultiChildTreeCardEventHandler(BillManageUI billUI,
+			ICardController control) {
+		super(billUI, control);
+
+	}
+
+	public boolean isAllowAddNode(TableTreeNode node) {
+
+		return super.isAllowAddNode(node);
+	}
+
+	public boolean isAllowDelNode(TableTreeNode node) {
+
+		return super.isAllowDelNode(node);
+	}
+
+	@Override
+	protected void onBoCard() throws Exception {
+		((BillManageUI)this.getBillUI()).setCurrentPanel(BillTemplateWrapper.CARDPANEL);
+		BillCardPanel card = ((BillManageUI)this.getBillUI()).getBillCardPanel();
+		BillCardLayout layout = (BillCardLayout)card.getLayout();
+		layout.setHeadScale(60);
+		layout.layoutContainer(card);
+		getBufferData().updateView();
+	}
+	
+	private void refashTreeVO(){
+		BillTreeManageUI treeUI = (BillTreeManageUI) getBillTreeManageUI();
+
+		AggregatedValueObject aggvo = this.getBillTreeManageUI()
+				.getBufferData().getCurrentVO();
+		DhContractVO headvo = (DhContractVO) aggvo.getParentVO();
+		treeUI.getBillTreeData().insertNodeToTree(headvo);
+		VOTreeNode selectnode = new VOTreeNode("");
+		selectnode.setNodeID(headvo.getPk_contract());
+		selectnode.setCode(headvo.getCtcode());
+
+		selectnode.setData(aggvo.getParentVO());
+		setSelectionPath(headvo);
+		this.onTreeSelected(selectnode);
+	}
+
+	public void setSelectionPath(DhContractVO headvo) {
+		TreePath selectTreePath = null;
+		MultiChildTreeCardUI treeUI = (MultiChildTreeCardUI) getBillTreeManageUI();
+
+		DefaultTreeModel treeModel = (DefaultTreeModel) treeUI.getBillTree()
+				.getModel();
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel
+				.getRoot();
+
+		Enumeration en = root.preorderEnumeration();
+		while (en.hasMoreElements()) {
+			TableTreeNode treeNode = (TableTreeNode) en.nextElement();
+			if ("root".equalsIgnoreCase(treeNode.getNodeID().toString().trim()))
+				continue;
+			VOTreeNode voTreeNode = (VOTreeNode) treeNode;
+			CircularlyAccessibleValueObject deptdocVO = voTreeNode.getData();
+			if (headvo.getCtcode().equalsIgnoreCase(
+					deptdocVO.getAttributeValue("ctcode").toString())) {
+				TreeNode[] treeNodes = treeModel.getPathToRoot(voTreeNode);
+				selectTreePath = new TreePath(treeNodes);
+				break;
+			}
+		}
+
+		if (selectTreePath != null) {
+			treeUI.getBillTree().expandPath(selectTreePath);
+			treeUI.getBillTree().setSelectionPath(selectTreePath);
+		}
+	}
+
+	public void onTreeSelected(VOTreeNode selectnode) {
+		super.onTreeSelected(selectnode);
+	}
+
+	protected void setAddNewOperate(boolean isAdding,
+			AggregatedValueObject billVO) throws Exception {
+
+		super.setAddNewOperate(isAdding, billVO);
+	}
+	
+	
+	
+	protected void onBoElse(int intBtn) throws Exception {
+		super.onBoElse(intBtn);
+		if (intBtn == IdhButton.FILEUPLOAD) {
+			DhContractVO cvo = (DhContractVO)this.getBufferData().getCurrentVO().getParentVO();
+			
+			String pkCorp = ClientEnvironment.getInstance().getCorporation().getPk_corp();
+			
+			if("1001".equals(pkCorp)){
+				DocumentManagerHT.showDM(this.getBillUI(), "DHHT", cvo.getCtcode());
+			}else{
+				if(null == cvo.getRelationid() || "".equals(cvo.getRelationid())){
+					DocumentManagerHT.showDM(this.getBillUI(), "DHHT", cvo.getCtcode());
+				}else{
+					IUAPQueryBS iQ = (IUAPQueryBS)NCLocator.getInstance().lookup(IUAPQueryBS.class.getName());
+					String sql = "select ctcode from dh_contract where pk_contract = '"+cvo.getRelationid()+"'";
+					String relcode = (String)iQ.executeQuery(sql, new ColumnProcessor());
+					DocumentManagerHT.showDM(this.getBillUI(), "DHHT", relcode);
+				}
+			}
+		}
+	}
+
+	@Override
+	protected boolean askForQueryCondition(StringBuffer sqlWhereBuf) throws Exception {
+		if (sqlWhereBuf == null)
+			throw new IllegalArgumentException(
+					"askForQueryCondition().sqlWhereBuf cann't be null");
+		UIDialog querydialog = getQueryUI();
+
+		if (querydialog.showModal() != UIDialog.ID_OK)
+			return false;
+		INormalQuery query = (INormalQuery) querydialog;
+
+		String strWhere = query.getWhereSql();
+		if (strWhere == null || strWhere.trim().length()==0){
+			strWhere = "1=1";
+		}else{
+			strWhere = strWhere.replaceAll("dh_contract.jobcode like '%", "dh_contract.jobcode like '");
+		}
+		if (getButtonManager().getButton(IBillButton.Busitype) != null) {
+			if (getBillIsUseBusiCode().booleanValue())
+				// 业务类型编码
+				strWhere = "(" + strWhere + ") and "
+						+ getBillField().getField_BusiCode() + "='"
+						+ getBillUI().getBusicode() + "'";
+
+			else
+				// 业务类型
+				strWhere = "(" + strWhere + ") and "
+						+ getBillField().getField_Busitype() + "='"
+						+ getBillUI().getBusinessType() + "'";
+
+		}
+
+		strWhere = "(" + strWhere + ") and (isnull(dr,0)=0)";
+
+		if (getHeadCondition() != null)
+			strWhere = strWhere + " and " + getHeadCondition();
+		// 现在我先直接把这个拼好的串放到StringBuffer中而不去优化拼串的过程
+		sqlWhereBuf.append(strWhere);
+		return true;
+	}
+
+	
+	
+}

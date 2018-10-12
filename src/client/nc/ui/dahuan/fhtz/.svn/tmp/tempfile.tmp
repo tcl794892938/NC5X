@@ -1,0 +1,194 @@
+package nc.ui.dahuan.fhtz;
+
+import java.util.List;
+import java.util.Map;
+
+import nc.bs.framework.common.NCLocator;
+import nc.itf.uap.IUAPQueryBS;
+import nc.jdbc.framework.processor.ColumnProcessor;
+import nc.jdbc.framework.processor.MapListProcessor;
+import nc.ui.pub.beans.MessageDialog;
+import nc.ui.pub.bill.BillCardPanel;
+import nc.ui.pub.bill.BillData;
+import nc.ui.pub.bill.BillModel;
+import nc.ui.trade.business.HYPubBO_Client;
+import nc.ui.trade.controller.IControllerBase;
+import nc.ui.trade.manage.BillManageUI;
+import nc.vo.dahuan.fhtz.DhDeliveryVO;
+import nc.vo.pub.AggregatedValueObject;
+import nc.vo.pub.lang.UFDouble;
+
+/**
+  *
+  *该类是AbstractMyEventHandler抽象类的实现类，
+  *主要是重载了按钮的执行动作，用户可以对这些动作根据需要进行修改
+  *@author author
+  *@version tempProject version
+  */
+  
+  public class MyEventHandler 
+                                          extends AbstractMyEventHandler{
+
+	public MyEventHandler(BillManageUI billUI, IControllerBase control){
+		super(billUI,control);		
+	}
+	
+	
+
+	@Override
+	protected void onBoSave() throws Exception {
+		
+		BillData data = this.getBillCardPanelWrapper().getBillCardPanel().getBillData();
+		if(data != null){
+			data.dataNotNullValidate();
+		}		
+		
+		BillCardPanel card = this.getBillCardPanelWrapper().getBillCardPanel();
+		Object vbobj = card.getHeadItem("vbillno").getValueObject();
+		String pkCon = card.getHeadItem("pk_contract").getValueObject().toString();
+		IUAPQueryBS iQ = NCLocator.getInstance().lookup(IUAPQueryBS.class);
+		if(null == vbobj || "".equals(vbobj)){
+			String pkCorp = this._getCorp().getPrimaryKey();
+			String strYear = this._getDate().getYear()+"";
+			String strMonth = this._getDate().getStrMonth();
+			String strDay = this._getDate().getStrDay();
+			
+			String qmsql = "select v.dept_code||to_char(sysdate,'yyyymmdd') qm_no from v_deptperonal v where v.pk_user='"+this._getOperator()+"'";
+			
+			List<Map<String,String>> qmml = (List<Map<String,String>>)iQ.executeQuery(qmsql, new MapListProcessor());
+			if(null != qmml && qmml.size()>0){
+				String billno = qmml.get(0).get("qm_no");
+
+				String sql = "select max(vbillno) from dh_delivery where vbillno like '"+billno+"%'";
+				
+				Object billnoobj = iQ.executeQuery(sql, new ColumnProcessor());
+				if(null == billnoobj || "".equals(billnoobj)){
+					billno += "0001";
+				}else{
+					String strNo = billnoobj.toString().substring(billnoobj.toString().length()-4, billnoobj.toString().length());
+					String intNo = String.valueOf(Integer.parseInt(strNo)+1);
+					for(int i = intNo.length();i<4;i++){
+						billno += "0";
+					}
+					billno += intNo;
+				}
+				
+				card.setHeadItem("vbillno", billno);
+				
+				UFDouble useAmt = new UFDouble("0.00");
+				UFDouble sumAmt = new UFDouble("0.00");
+				
+				String qmtsql = "select sum(nvl(b.pduamount,0)) pduamt from dh_delivery a left join dh_delivery_d b " +
+						" on a.pk_dhdelivery = b.pk_dhdelivery and nvl(a.dr,0)=0 and nvl(b.dr,0)=0 "+
+						"  where a.pk_contract = '"+pkCon+"' ";
+				List<Map<String,Object>> lm = (List<Map<String,Object>>)iQ.executeQuery(qmtsql, new MapListProcessor());
+				if(null != lm && lm.size() > 0){
+					useAmt = new UFDouble(lm.get(0).get("pduamt")==null?"0.00":lm.get(0).get("pduamt").toString());
+				}
+				
+				String ctsql = "select v.dctjetotal from v_dhdelivery v where v.pk_contract='"+pkCon+"'";
+				List<Map<String,Object>> lv = (List<Map<String,Object>>)iQ.executeQuery(ctsql, new MapListProcessor());
+				if(null != lv && lv.size() > 0){
+					sumAmt = new UFDouble(lv.get(0).get("dctjetotal")==null?"0.00":lv.get(0).get("dctjetotal").toString());
+				}
+				
+				UFDouble unAmt = sumAmt.sub(useAmt);
+				
+				UFDouble syAmt = new UFDouble("0.00");
+				BillModel bmd = card.getBillModel();
+				for(int i=0;i<bmd.getRowCount();i++){
+					UFDouble mdAmt = new UFDouble(bmd.getValueAt(i, "pduamount")==null?"0.00":bmd.getValueAt(i, "pduamount").toString());
+					syAmt = syAmt.add(mdAmt);
+				}
+				
+				if(unAmt.compareTo(syAmt)<0){
+					MessageDialog.showHintDlg(this.getBillUI(), "提示", "累计发货金额已超出合同金额，不可保存");
+					return;
+				}
+			}else{
+				MessageDialog.showHintDlg(this.getBillUI(), "提示", "当前用户未分配部门，请先维护该用户的部门信息");
+				return;
+			}
+		}else{
+			
+			String pkDel = card.getHeadItem("pk_dhdelivery").getValueObject().toString();
+			
+			UFDouble useAmt = new UFDouble("0.00");
+			UFDouble sumAmt = new UFDouble("0.00");
+			
+			String qmtsql = "select sum(nvl(b.pduamount,0)) pduamt from dh_delivery a left join dh_delivery_d b " +
+							" on a.pk_dhdelivery = b.pk_dhdelivery and nvl(a.dr,0)=0 and nvl(b.dr,0)=0 "+
+							" where a.pk_contract = '"+pkCon+"'  and a.pk_dhdelivery <> '"+pkDel+"' ";
+			
+			List<Map<String,Object>> lm = (List<Map<String,Object>>)iQ.executeQuery(qmtsql, new MapListProcessor());
+			if(null != lm && lm.size() > 0){
+				useAmt = new UFDouble(lm.get(0).get("pduamt")==null?"0.00":lm.get(0).get("pduamt").toString());
+			}
+			
+			String ctsql = "select v.dctjetotal from v_dhdelivery v where v.pk_contract='"+pkCon+"'";
+			List<Map<String,Object>> lv = (List<Map<String,Object>>)iQ.executeQuery(ctsql, new MapListProcessor());
+			if(null != lv && lv.size() > 0){
+				sumAmt = new UFDouble(lv.get(0).get("dctjetotal")==null?"0.00":lv.get(0).get("dctjetotal").toString());
+			}
+			
+			UFDouble unAmt = sumAmt.sub(useAmt);
+			
+			UFDouble syAmt = new UFDouble("0.00");
+			BillModel bmd = card.getBillModel();
+			for(int i=0;i<bmd.getRowCount();i++){
+				UFDouble mdAmt = new UFDouble(bmd.getValueAt(i, "pduamount")==null?"0.00":bmd.getValueAt(i, "pduamount").toString());
+				syAmt = syAmt.add(mdAmt);
+			}
+			
+			if(unAmt.compareTo(syAmt)<0){
+				MessageDialog.showHintDlg(this.getBillUI(), "提示", "累计发货金额已超出合同金额，不可保存");
+				return;
+			}
+		}
+		
+		super.onBoSave();
+	}
+
+
+
+	@Override
+	protected void onBoElse(int intBtn) throws Exception {
+		super.onBoElse(intBtn);
+		
+	}	
+
+
+	@Override
+	public void onBoAudit() throws Exception {
+		AggregatedValueObject aggvo = this.getBufferData().getCurrentVO();
+		if(null != aggvo){
+			DhDeliveryVO dvo = (DhDeliveryVO)aggvo.getParentVO();
+			
+			if(null == dvo.getRelationid() || "".equals(dvo.getRelationid())){
+				dvo.setIsdelivery(1);
+				dvo.setAuditperson(this._getOperator());
+				HYPubBO_Client.update(dvo);
+				MessageDialog.showHintDlg(this.getBillUI(), "提示", "发货确认完成");
+			}else{
+				MessageDialog.showHintDlg(this.getBillUI(), "提示", "请通知子公司确认发货");
+			}
+		}else{
+			MessageDialog.showHintDlg(this.getBillUI(), "提示", "请选择单据");
+		}	
+		super.onBoRefresh();
+	}
+
+
+
+	@Override
+	protected void onBoPrint() throws Exception {
+		super.onBoPrint();
+		DhDeliveryVO dvo = (DhDeliveryVO)this.getBufferData().getCurrentVO().getParentVO();
+		dvo.setIsprint(1);
+		HYPubBO_Client.update(dvo);
+		super.onBoRefresh();
+	}	
+	
+	
+	
+}

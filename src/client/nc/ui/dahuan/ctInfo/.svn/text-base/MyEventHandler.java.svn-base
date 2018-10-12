@@ -1,0 +1,264 @@
+package nc.ui.dahuan.ctInfo;
+
+import nc.bs.framework.common.NCLocator;
+import nc.itf.uap.IUAPQueryBS;
+import nc.jdbc.framework.processor.ColumnProcessor;
+import nc.ui.bfriend.button.IdhButton;
+import nc.ui.pub.beans.MessageDialog;
+import nc.ui.pub.bill.BillCardPanel;
+import nc.ui.pub.bill.BillData;
+import nc.ui.trade.business.HYPubBO_Client;
+import nc.ui.trade.controller.IControllerBase;
+import nc.ui.trade.manage.BillManageUI;
+import nc.vo.dahuan.ctInfo.CubasVO;
+import nc.vo.dahuan.ctInfo.CumanVO;
+import nc.vo.dahuan.ctInfo.CustVO;
+import nc.vo.pub.AggregatedValueObject;
+
+/**
+  *
+  *该类是AbstractMyEventHandler抽象类的实现类，
+  *主要是重载了按钮的执行动作，用户可以对这些动作根据需要进行修改
+  *@author author
+  *@version tempProject version
+  */
+  
+  public class MyEventHandler extends AbstractMyEventHandler{
+
+	public MyEventHandler(BillManageUI billUI, IControllerBase control){
+		super(billUI,control);		
+	}
+
+	@Override
+	protected void onBoElse(int intBtn) throws Exception {
+		super.onBoElse(intBtn);
+		if(intBtn == IdhButton.RET_COMMIT){
+			onBoRetCommit();
+		}
+		if(intBtn == IdhButton.CWQR){
+			onBoCwQr();
+		}
+		if(intBtn == IdhButton.AGREE){
+			onBoAgree();
+		}
+		if(intBtn == IdhButton.NOAGREE){
+			onBoNoAgree();
+		}
+	}
+
+	
+	
+	@Override
+	protected void onBoSave() throws Exception {
+		
+		BillCardPanel card = this.getBillCardPanelWrapper().getBillCardPanel();
+		BillData data = card.getBillData();
+		if(data != null){
+			data.dataNotNullValidate();
+		}
+		
+		//		 重复校验
+		int dcflag = (Integer)card.getHeadItem("dj_status").getValueObject();
+		Object pkcubobj = card.getHeadItem("pk_cubasdoc").getValueObject();
+		String cuname = (String)card.getHeadItem("dhcust_name").getValueObject();
+		if(1==dcflag){
+			if(null == pkcubobj || "".equals(pkcubobj)){
+				MessageDialog.showHintDlg(this.getBillUI(), "提示", "请维护要变更的客商信息");
+				return;
+			}
+			String cfsql= "select count(1) from bd_cubasdoc t where t.pk_cubasdoc<>'"+pkcubobj.toString()+"' and t.custname = '"+cuname+"' ";
+			IUAPQueryBS iQ = NCLocator.getInstance().lookup(IUAPQueryBS.class);
+			int retcf = (Integer)iQ.executeQuery(cfsql, new ColumnProcessor());
+			if(retcf != 0){
+				MessageDialog.showHintDlg(this.getBillUI(), "提示", "客商已存在");
+				return;
+			}
+		}else if(0==dcflag){
+			String cfsql= "select count(1) from bd_cubasdoc t where t.custname = '"+cuname+"' ";
+			IUAPQueryBS iQ = NCLocator.getInstance().lookup(IUAPQueryBS.class);
+			int retcf = (Integer)iQ.executeQuery(cfsql, new ColumnProcessor());
+			if(retcf != 0){
+				MessageDialog.showHintDlg(this.getBillUI(), "提示", "客商已存在");
+				return;
+			}
+		}
+		
+		super.onBoSave();
+	}
+
+	@Override
+	protected void onBoEdit() throws Exception {
+		AggregatedValueObject aggvo = this.getBufferData().getCurrentVO();
+		if(null != aggvo){
+			CustVO ctvo = (CustVO)aggvo.getParentVO();
+			if(this._getOperator().equals(ctvo.getVoperid())){
+				super.onBoEdit();
+			}else{
+				MessageDialog.showHintDlg(this.getBillUI(), "提示", "只有该单据的制单人才可执行此操作");
+			}
+		}
+	}
+
+	// 提交
+	@Override
+	protected void onBoCommit() throws Exception {
+		AggregatedValueObject aggvo = this.getBufferData().getCurrentVO();
+		if(null != aggvo){
+			CustVO ctvo = (CustVO)aggvo.getParentVO();
+			if(this._getOperator().equals(ctvo.getVoperid())){
+				CustVO nctvo = (CustVO)HYPubBO_Client.queryByPrimaryKey(CustVO.class, ctvo.getPk_dhcust());
+				nctvo.setDhcust_flag(1);
+				nctvo.setGcbid(null);
+				nctvo.setGcbdate(null);
+				nctvo.setFuzongid(null);
+				nctvo.setVappdate(null);
+				HYPubBO_Client.update(nctvo);
+				super.onBoRefresh();
+			}else{
+				MessageDialog.showHintDlg(this.getBillUI(), "提示", "只有该单据的制单人才可执行此操作");
+			}
+		}
+	}	
+	
+	// 撤销
+	@Override
+	protected void onBoCancelAudit() throws Exception {
+		AggregatedValueObject aggvo = this.getBufferData().getCurrentVO();
+		if(null != aggvo){
+			CustVO ctvo = (CustVO)aggvo.getParentVO();
+			if(this._getOperator().equals(ctvo.getVoperid())){
+				CustVO nctvo = (CustVO)HYPubBO_Client.queryByPrimaryKey(CustVO.class, ctvo.getPk_dhcust());
+				nctvo.setDhcust_flag(0);
+				HYPubBO_Client.update(nctvo);
+				super.onBoRefresh();
+			}else{
+				MessageDialog.showHintDlg(this.getBillUI(), "提示", "只有该单据的制单人才可执行此操作");
+			}
+		}
+	}
+	
+	// 工程部审核
+	@Override
+	public void onBoAudit() throws Exception {
+		AggregatedValueObject aggvo = this.getBufferData().getCurrentVO();
+		if(null != aggvo){
+			CustVO ctvo = (CustVO)aggvo.getParentVO();
+			CustVO nctvo = (CustVO)HYPubBO_Client.queryByPrimaryKey(CustVO.class, ctvo.getPk_dhcust());
+			nctvo.setDhcust_flag(3);
+			nctvo.setGcbid(this._getOperator());
+			nctvo.setGcbdate(this._getDate());
+			nctvo.setFuzongid(null);
+			nctvo.setVappdate(null);
+			HYPubBO_Client.update(nctvo);
+			super.onBoRefresh();
+		}
+	}
+	
+	// 工程部驳回
+	public void onBoRetCommit() throws Exception {
+		AggregatedValueObject aggvo = this.getBufferData().getCurrentVO();
+		if(null != aggvo){
+			CustVO ctvo = (CustVO)aggvo.getParentVO();
+			CustVO nctvo = (CustVO)HYPubBO_Client.queryByPrimaryKey(CustVO.class, ctvo.getPk_dhcust());
+			nctvo.setDhcust_flag(2);
+			
+			CanAudMemoDialog cmg = new CanAudMemoDialog(this.getBillUI());
+			if(cmg.showCanAudMemoDialog(nctvo)){
+				nctvo.setGcbid(this._getOperator());
+				nctvo.setGcbdate(this._getDate());
+				nctvo.setFuzongid(null);
+				nctvo.setVappdate(null);
+				HYPubBO_Client.update(nctvo);
+			}
+			
+			super.onBoRefresh();
+		}
+	}
+	
+	// 不同意
+	public void onBoNoAgree() throws Exception{
+		AggregatedValueObject aggvo = this.getBufferData().getCurrentVO();
+		if(null != aggvo){
+			CustVO ctvo = (CustVO)aggvo.getParentVO();
+			CustVO nctvo = (CustVO)HYPubBO_Client.queryByPrimaryKey(CustVO.class, ctvo.getPk_dhcust());
+			nctvo.setDhcust_flag(2);
+			
+			CanAudMemoDialog cmg = new CanAudMemoDialog(this.getBillUI());
+			if(cmg.showCanAudMemoDialog(nctvo)){
+				nctvo.setFuzongid(this._getOperator());
+				nctvo.setVappdate(this._getDate());
+				HYPubBO_Client.update(nctvo);
+			}
+			super.onBoRefresh();
+		}
+	}
+	
+
+	// 副总同意
+	public void onBoAgree() throws Exception{
+		AggregatedValueObject aggvo = this.getBufferData().getCurrentVO();
+		if(null != aggvo){
+			CustVO ctvo = (CustVO)aggvo.getParentVO();
+			CustVO nctvo = (CustVO)HYPubBO_Client.queryByPrimaryKey(CustVO.class, ctvo.getPk_dhcust());
+			nctvo.setDhcust_flag(4);
+			nctvo.setFuzongid(this._getOperator());
+			nctvo.setVappdate(this._getDate());
+			HYPubBO_Client.update(nctvo);
+			super.onBoRefresh();
+		}
+	}
+	
+	// 财务确认
+	public void onBoCwQr() throws Exception {
+		AggregatedValueObject aggvo = this.getBufferData().getCurrentVO();
+		if(null != aggvo){
+			CustVO ctvo = (CustVO)aggvo.getParentVO();
+			CustVO nctvo = (CustVO)HYPubBO_Client.queryByPrimaryKey(CustVO.class, ctvo.getPk_dhcust());
+			
+			if(1==nctvo.getDhcust_flag()){
+				// 变更
+				CumanVO cmvo = (CumanVO)HYPubBO_Client.queryByPrimaryKey(CumanVO.class,nctvo.getPkcumandoc());
+				cmvo.setDef1(nctvo.getDhcust_bank());
+				cmvo.setDef2(nctvo.getDhcust_saxno());
+				HYPubBO_Client.update(cmvo);
+				
+				
+				
+				
+				CubasVO cbvo = (CubasVO)HYPubBO_Client.queryByPrimaryKey(CubasVO.class,nctvo.getPk_cubasdoc());
+				cbvo.setCustname(nctvo.getDhcust_name());
+				cbvo.setCustshortname(nctvo.getDhcust_shortname());
+				cbvo.setPk_areacl(nctvo.getDhcust_area());
+				cbvo.setTaxpayerid(nctvo.getDhcust_sayno());
+				cbvo.setPhone1(nctvo.getDhcust_tel());
+				cbvo.setZipcode(nctvo.getDhcust_pos());
+				cbvo.setConaddr(nctvo.getCust_address());
+				cbvo.setRegisterfund(nctvo.getZuce_amount());
+				HYPubBO_Client.update(cbvo);
+			}else if(2==nctvo.getDhcust_flag()){
+				// 注销
+				CumanVO cmvo = (CumanVO)HYPubBO_Client.queryByPrimaryKey(CumanVO.class,nctvo.getPkcumandoc());
+				cmvo.setSealflag("Y");
+				HYPubBO_Client.update(cmvo);
+			}else{
+				// 新增
+				String pkcorp = this._getCorp().getPrimaryKey();
+				
+				String cksql = "select count(1) from bd_cumandoc m where (m.sealflag is null or m.sealflag = 'N') and nvl(m.dr, 0) = 0 "+
+							" and (m.pk_corp = '"+pkcorp+"' or m.pk_corp = '0001') and exists (select 1 from bd_cubasdoc b where nvl(b.dr, 0) = 0 " +
+							" and b.pk_cubasdoc = m.pk_cubasdoc and b.custname = '"+nctvo.getDhcust_name()+"') ";
+				IUAPQueryBS iQ = NCLocator.getInstance().lookup(IUAPQueryBS.class);
+				int cot = (Integer)iQ.executeQuery(cksql, new ColumnProcessor());
+				if(cot==0){
+					MessageDialog.showHintDlg(this.getBillUI(), "提示", "请手工维护新增的客商信息");
+					return;
+				}
+			}
+			nctvo.setDhcust_flag(5);
+			nctvo.setCaiwuid(this._getOperator());
+			nctvo.setSuredate(this._getDate());
+			HYPubBO_Client.update(nctvo);
+			super.onBoRefresh();
+		}
+	}
+}

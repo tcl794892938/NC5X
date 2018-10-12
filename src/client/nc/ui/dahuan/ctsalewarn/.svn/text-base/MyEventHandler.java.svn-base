@@ -1,0 +1,200 @@
+package nc.ui.dahuan.ctsalewarn;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import nc.bs.framework.common.NCLocator;
+import nc.itf.uap.IUAPQueryBS;
+import nc.jdbc.framework.processor.ColumnProcessor;
+import nc.jdbc.framework.processor.MapListProcessor;
+import nc.ui.pub.beans.UIDialog;
+import nc.ui.trade.bill.IListController;
+import nc.ui.trade.list.BillListUI;
+import nc.ui.trade.list.ListEventHandler;
+import nc.ui.trade.query.HYQueryConditionDLG;
+import nc.ui.trade.query.INormalQuery;
+import nc.vo.dahuan.ctcheck.CtCheckVO;
+import nc.vo.pub.lang.UFDate;
+import nc.vo.pub.lang.UFDouble;
+import nc.vo.pub.query.ConditionVO;
+
+public class MyEventHandler extends ListEventHandler {
+
+	public MyEventHandler(BillListUI billUI, IListController control) {
+		super(billUI, control);
+	}
+
+	@Override
+	protected void onBoQuery() throws Exception {
+		
+		HYQueryConditionDLG querydialog = (HYQueryConditionDLG)getQueryUI();
+
+		if (querydialog.showModal() != UIDialog.ID_OK){
+			return;
+		}
+		
+		ConditionVO[] conds = querydialog.getQryCondEditor().getGeneralCondtionVOs();
+		
+		// 天数
+		int beforeday = 0;
+		// 合同号 
+		String ctcode = "";
+		//合同名称 
+		String ctname = "";
+		//项目名称 
+		String xmname = "";
+		//制单部门 
+		String deptname = "";
+		//销售客户 
+		String custname = "";
+		//未付款金额
+		String syje = "";
+		// 公司
+		String pkcorp="";
+		// 发货标志
+		String isdel = "";
+		
+		
+		if(null != conds && conds.length>0){
+			for(ConditionVO cd:conds){
+				if("beforedaynum".equals(cd.getFieldCode())){
+					beforeday = Integer.valueOf(cd.getValue());
+				}
+				if("ctcode".equals(cd.getFieldCode())){
+					ctcode = " and v.ctcode "+cd.getOperaCode()+" '"+cd.getValue()+"' ";
+				}
+				if("ctname".equals(cd.getFieldCode())){
+					ctname = " and v.ctname "+cd.getOperaCode()+" '"+cd.getValue()+"' ";
+				}
+				if("xmname".equals(cd.getFieldCode())){
+					xmname = " and v.jobname "+cd.getOperaCode()+" '"+cd.getValue()+"' ";
+				}
+				if("deptname".equals(cd.getFieldCode())){
+					deptname = " and v.deptname "+cd.getOperaCode()+" '"+cd.getValue()+"' ";
+				}
+				if("custname".equals(cd.getFieldCode())){
+					custname = " and v.custname "+cd.getOperaCode()+" '"+cd.getValue()+"' ";
+				}
+				if("syje".equals(cd.getFieldCode())){
+					syje =  " and v.syje "+cd.getOperaCode()+" "+cd.getValue()+" ";
+				}
+				if("pkcorp".equals(cd.getFieldCode())){
+					pkcorp =  " and v.pk_corp "+cd.getOperaCode()+" "+cd.getValue()+" ";
+				}
+				if("isdelivery".equals(cd.getFieldCode())){
+					isdel =  " and v.is_delivery "+cd.getOperaCode()+" "+cd.getValue()+" ";
+				}
+			}
+		}
+
+		String sql = "select v.ctcode,v.ctname,v.jobname xmname,v.deptname,v.custname,v.prepareddate,v.no,v.syje,v.yszk," +
+				" v.dctjetotal,v.htrq,v.djhdate from v_concheck v where v.no is not null and v.prepareddate is not null ";
+		
+		if(!"".equals(ctcode)){
+			sql += ctcode;
+		}
+		if(!"".equals(ctname)){
+			sql += ctname;
+		}
+		if(!"".equals(xmname)){
+			sql += xmname;
+		}
+		if(!"".equals(deptname)){
+			sql += deptname;
+		}
+		if(!"".equals(custname)){
+			sql += custname;
+		}
+		if(!"".equals(syje)){
+			sql += syje;
+		}
+		if(!"".equals(pkcorp)){
+			sql += pkcorp;
+		}
+		if(!"".equals(isdel)){
+			sql += isdel;
+		}
+		
+		IUAPQueryBS iQ = NCLocator.getInstance().lookup(IUAPQueryBS.class);
+		
+		// 部门权限过滤
+		String deptsql = "select count(1) from sm_user_role u where u.pk_corp = '"+_getCorp().getPrimaryKey()+"' and u.cuserid = '"+_getOperator()+"' " 
+						+ " and u.pk_role = (select r.pk_role from sm_role r where r.role_code = 'DHSX' and nvl(r.dr,0)=0) and nvl(u.dr,0)=0 ";
+		int retCot = (Integer)iQ.executeQuery(deptsql, new ColumnProcessor());
+		if(0==retCot){
+			sql += " and exists (select 1 from v_deptperonal f where v.deptname = f.dept_name and f.pk_user='"+_getOperator()+"' and f.pk_corp='"+_getCorp().getPrimaryKey()+"') ";
+		}
+		
+		
+		List<Map<String,Object>> maplit = (List<Map<String,Object>>)iQ.executeQuery(sql, new MapListProcessor());
+		
+		if(null != maplit && maplit.size()>0){
+			Map<String,Map<String,Object>> ckmap = new HashMap<String, Map<String,Object>>();
+			
+			for(Map<String,Object> map : maplit){
+				
+				String ctcodef = map.get("ctcode").toString();
+				if(ckmap.containsKey(ctcodef)){
+					UFDate ufdateM = new UFDate(ckmap.get(ctcodef).get("prepareddate").toString());
+					UFDate ufdateR = new UFDate(map.get("prepareddate").toString());
+					if(ufdateR.after(ufdateM)){
+						ckmap.put(ctcodef, map);
+					}
+				}else{
+					ckmap.put(ctcodef, map);
+				}
+			}
+			
+			UFDate nowdate = new UFDate();
+			UFDate qxdate = nowdate.getDateBefore(beforeday);
+			
+			List<CtCheckVO> ctcklit = new ArrayList<CtCheckVO>();
+			for(String strKey : ckmap.keySet()){
+				Map<String,Object> objmap = ckmap.get(strKey);
+				
+				UFDate ufdateM = new UFDate(objmap.get("prepareddate").toString());
+				if(ufdateM.before(qxdate)){
+					CtCheckVO cc = new CtCheckVO();
+					for(String objKey : objmap.keySet()){
+						if("syje".equals(objKey)){
+							UFDouble syjec = objmap.get(objKey)==null?new UFDouble("0.00"):new UFDouble(objmap.get(objKey).toString());
+							cc.setSyje(syjec);
+						}else if("yszk".equals(objKey)){
+							UFDouble yszkc = objmap.get(objKey)==null?new UFDouble("0.00"):new UFDouble(objmap.get(objKey).toString());
+							cc.setYszk(yszkc);
+						}else if("dctjetotal".equals(objKey)){
+							UFDouble dctjetotal = objmap.get(objKey)==null?new UFDouble("0.00"):new UFDouble(objmap.get(objKey).toString());
+							cc.setDctjetotal(dctjetotal);
+						}else if("htrq".equals(objKey)){
+							if(null != objmap.get(objKey) && !"".equals(objmap.get(objKey))){
+								UFDate date = new UFDate(objmap.get(objKey).toString());
+								cc.setHtrq(date);
+							}
+						}else if("djhdate".equals(objKey)){
+							if(null != objmap.get(objKey) && !"".equals(objmap.get(objKey))){
+								UFDate date = new UFDate(objmap.get(objKey).toString());
+								cc.setDjhdate(date);
+							}
+						}else{
+							cc.setAttributeValue(objKey, objmap.get(objKey));
+						}
+					}
+					ctcklit.add(cc);
+				}
+			}
+			
+			
+			getBufferData().clear();
+			addDataToBuffer(ctcklit.toArray(new CtCheckVO[0]));
+			updateBuffer();
+			
+			
+		}else{
+			getBufferData().clear();
+			updateBuffer();
+		}
+	}
+	
+}

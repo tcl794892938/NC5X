@@ -1,0 +1,224 @@
+package nc.ui.dahuan.xmrz;
+
+import java.util.List;
+
+import nc.bs.framework.common.NCLocator;
+import nc.itf.uap.IUAPQueryBS;
+import nc.jdbc.framework.processor.BeanListProcessor;
+import nc.jdbc.framework.processor.ColumnProcessor;
+import nc.ui.bfriend.button.IdhButton;
+import nc.ui.pub.beans.UIDialog;
+import nc.ui.trade.button.IBillButton;
+import nc.ui.trade.controller.IControllerBase;
+import nc.ui.trade.manage.BillManageUI;
+import nc.ui.trade.query.INormalQuery;
+import nc.vo.dahuan.xmrz.HtlogoVO;
+
+/**
+  *
+  *该类是AbstractMyEventHandler抽象类的实现类，
+  *主要是重载了按钮的执行动作，用户可以对这些动作根据需要进行修改
+  *@author author
+  *@version tempProject version
+  */
+  
+  public class MyEventHandler 
+                                          extends AbstractMyEventHandler{
+
+	public MyEventHandler(BillManageUI billUI, IControllerBase control){
+		super(billUI,control);		
+	}
+	
+	private IUAPQueryBS query = NCLocator.getInstance().lookup(IUAPQueryBS.class);
+	private String sql = "";
+	
+	@Override
+	protected void onBoElse(int intBtn) throws Exception {
+		super.onBoElse(intBtn);
+		
+		 if(intBtn == IdhButton.SJJL){//设计记录 0
+			sjjl();
+		}else if(intBtn == IdhButton.JHZT){//交货记录 1
+			jhzt();
+		}else if(intBtn == IdhButton.TJJL){//土建记录 2
+			tjjl();
+		}else if(intBtn == IdhButton.KSZT){//安装记录 3 
+			kszt();
+		}else if(intBtn == IdhButton.TSZT){//调试状态 4
+			tszt(); 
+		}else if(intBtn == IdhButton.WGZT){//完工记录 5
+			wgzt();
+		}else if(intBtn == IdhButton.CGJL){//采购记录 6
+			cgjl();
+		}else if(intBtn == IdhButton.QTZT){//其他记录 7
+			qtzt();
+		}
+		 
+		updateListView();
+
+	}	
+
+	private void qtzt() throws Exception {
+		// TODO Auto-generated method stub
+		HtlogoVO vo = (HtlogoVO)this.getBufferData().getCurrentVO().getParentVO();
+		
+		HtlogoDialog dg = new HtlogoDialog(this.getBillUI());
+		dg.showHtlogoDialog(7,vo.getPk_contract(),_getOperator());
+	}
+
+	private void cgjl() throws Exception {
+		// TODO Auto-generated method stub
+		HtlogoVO vo = (HtlogoVO)this.getBufferData().getCurrentVO().getParentVO();
+		
+		HtlogoDialog dg = new HtlogoDialog(this.getBillUI());
+		dg.showHtlogoDialog(6,vo.getPk_contract(),_getOperator());
+	}
+
+	private void wgzt() throws Exception {
+		// TODO Auto-generated method stub
+		HtlogoVO vo = (HtlogoVO)this.getBufferData().getCurrentVO().getParentVO();
+		
+		HtlogoDialog dg = new HtlogoDialog(this.getBillUI());
+		dg.showHtlogoDialog(5,vo.getPk_contract(),_getOperator());
+	}
+
+
+
+	private void tszt() throws Exception {
+		// TODO Auto-generated method stub
+		HtlogoVO vo = (HtlogoVO)this.getBufferData().getCurrentVO().getParentVO();
+		
+		HtlogoDialog dg = new HtlogoDialog(this.getBillUI());
+		dg.showHtlogoDialog(4,vo.getPk_contract(),_getOperator());
+	}
+
+
+
+	private void kszt() throws Exception {
+		// TODO Auto-generated method stub
+		HtlogoVO vo = (HtlogoVO)this.getBufferData().getCurrentVO().getParentVO();
+		
+		HtlogoDialog dg = new HtlogoDialog(this.getBillUI());
+		dg.showHtlogoDialog(3,vo.getPk_contract(),_getOperator());
+	}
+	
+	private void tjjl() throws Exception {
+		// TODO Auto-generated method stub
+		HtlogoVO vo = (HtlogoVO)this.getBufferData().getCurrentVO().getParentVO();
+		
+		HtlogoDialog dg = new HtlogoDialog(this.getBillUI());
+		dg.showHtlogoDialog(2,vo.getPk_contract(),_getOperator());
+	}
+
+
+
+	private void jhzt() throws Exception {
+		HtlogoVO vo = (HtlogoVO)this.getBufferData().getCurrentVO().getParentVO();
+		
+		HtlogoDialog dg = new HtlogoDialog(this.getBillUI());
+		dg.showHtlogoDialog(1,vo.getPk_contract(),_getOperator());
+	}
+	
+
+	private void sjjl() throws Exception {
+		HtlogoVO vo = (HtlogoVO)this.getBufferData().getCurrentVO().getParentVO();
+		
+		HtlogoDialog dg = new HtlogoDialog(this.getBillUI());
+		dg.showHtlogoDialog(0,vo.getPk_contract(),_getOperator());
+	}
+	
+	private BillManageUI getBillManageUI() {
+		return (BillManageUI) getBillUI();
+	}
+
+	@Override
+	protected void onBoQuery() throws Exception {
+		
+		StringBuffer strWhere = new StringBuffer();
+		
+		if (askForQueryCondition(strWhere) == false)
+			return;// 用户放弃了查询
+		
+		//添加过滤条件
+		String user = _getOperator();
+		String pkCorp = _getCorp().getPrimaryKey();
+				
+		// 自动化部门特殊处理
+		String deptsql = "select count(1) from sm_user_role u where u.pk_corp = '"+pkCorp+"' and u.cuserid = '"+user+"' " 
+					+ " and u.pk_role = (select r.pk_role from sm_role r where r.role_code = 'DHXM' and nvl(r.dr,0)=0) and nvl(u.dr,0)=0 ";
+		int retCot = (Integer)query.executeQuery(deptsql, new ColumnProcessor());
+		
+		if(0<retCot){
+			// 项目日志通查
+			sql = " select dt.htname,dt.htcode,dt.pk_contract,dt.customername,dt.manager,dt.startdate,dt.donedate,dt.contractor,dt.projectbudget,dt.is_sheji,"
+				+ " dt.is_jiaohuo,dt.is_tujian,dt.is_anzhuang,dt.is_tiaoshi,dt.is_wangong,dt.is_caigou,dt.is_qita from v_xmrz dt where 1=1 " 
+				+ " and "+strWhere.toString();
+		}else{
+			// 项目日志中，查询已付款的合同，并且本部门只能看本部门的合同信息
+			sql = " select dt.htname,dt.htcode,dt.pk_contract,dt.customername,dt.manager,dt.startdate,dt.donedate,dt.contractor,dt.projectbudget,dt.is_sheji,"
+				+ " dt.is_jiaohuo,dt.is_tujian,dt.is_anzhuang,dt.is_tiaoshi,dt.is_wangong,dt.is_caigou,dt.is_qita from v_xmrz dt where " 
+				+ " (dt.pk_deptdoc in(select v.pk_deptdoc from v_deptperonal v where v.pk_corp='"+pkCorp+"' and v.pk_user='"+user+"')"
+				+ " or "
+				+ " dt.ht_dept in(select v.pk_deptdoc from v_deptperonal v where v.pk_corp='"+pkCorp+"' and v.pk_user='"+user+"')) "
+				+ " and "+strWhere.toString();
+		}
+		
+		updateListView();
+	}
+
+	private void updateListView() throws Exception{
+		
+		List<HtlogoVO> lit = (List<HtlogoVO>)query.executeQuery(sql, new BeanListProcessor(HtlogoVO.class));
+		
+		getBufferData().clear();
+		// 增加数据到Buffer
+		addDataToBuffer(lit.toArray(new HtlogoVO[]{}));//把lit的数据转换类型
+
+		updateBuffer();
+		
+	}
+
+	@Override
+	protected boolean askForQueryCondition(StringBuffer sqlWhereBuf) throws Exception {
+
+		if (sqlWhereBuf == null)
+			throw new IllegalArgumentException(
+					"askForQueryCondition().sqlWhereBuf cann't be null");
+		UIDialog querydialog = getQueryUI();
+
+		if (querydialog.showModal() != UIDialog.ID_OK)
+			return false;
+		INormalQuery query = (INormalQuery) querydialog;
+
+		String strWhere = query.getWhereSql();
+		if (strWhere == null || strWhere.trim().length()==0)
+			strWhere = "1=1";
+
+		if (getButtonManager().getButton(IBillButton.Busitype) != null) {
+			if (getBillIsUseBusiCode().booleanValue())
+				// 业务类型编码
+				strWhere = "(" + strWhere + ") and "
+						+ getBillField().getField_BusiCode() + "='"
+						+ getBillUI().getBusicode() + "'";
+
+			else
+				// 业务类型
+				strWhere = "(" + strWhere + ") and "
+						+ getBillField().getField_Busitype() + "='"
+						+ getBillUI().getBusinessType() + "'";
+
+		}
+
+		strWhere = "(" + strWhere + ") ";
+
+		if (getHeadCondition() != null)
+			strWhere = strWhere + " and " + getHeadCondition();
+		// 现在我先直接把这个拼好的串放到StringBuffer中而不去优化拼串的过程
+		sqlWhereBuf.append(strWhere);
+		return true;
+	
+	}
+	
+	
+	
+}

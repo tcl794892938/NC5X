@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="gb2312"?>
+<module name="ngPrivateEJB">
+  <public>
+    <component priority="0" singleton="true" supportAlias="true"  remote="true" tx="CMT">
+      <interface>nc.itf.dahuan.pf.IdhServer</interface>
+      <implementation>nc.bs.dahuan.fkjh.DhserverDMO</implementation>
+    </component> 
+    
+     <component priority="0" singleton="true" supportAlias="true"  remote="true" tx="CMT">
+      <interface>nc.itf.dahuan.pf.IdhtkServer</interface>
+      <implementation>nc.bs.dh.httk.QueryhttkDMO</implementation>
+    </component> 
+    
+  </public>
+</module>
+
