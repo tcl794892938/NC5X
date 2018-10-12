@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+xmlns:jaxws="http://java.sun.com/xml/ns/jaxws"
+jaxb:version="2.0"
+xmlns:ns0="http://itf.arap.ui.nc/IUpdateMidData"
+targetNamespace="http://itf.arap.ui.nc/IUpdateMidData">
+
+<jaxws:bindings>
+	<jaxws:package name="nc.ui.arap.itf"/>
+</jaxws:bindings>
+
+<wsdl:types>
+   <xsd:schema xmlns:ns="http://itf.arap.ui.nc/IUpdateMidData"
+			xmlns:businessException="http://pub.vo.nc/BusinessException"
+			attributeFormDefault="unqualified"
+			elementFormDefault="unqualified"
+			targetNamespace="http://itf.arap.ui.nc/IUpdateMidData" jaxb:version="2.0">
+	<xsd:annotation>
+    	<xsd:appinfo>
+   			<jaxb:schemaBindings>
+    			<jaxb:package name="nc.ui.arap.itf"/>
+    		</jaxb:schemaBindings>
+   		</xsd:appinfo>
+   	</xsd:annotation>
+	 <xsd:import namespace="http://pub.vo.nc/BusinessException" schemaLocation="/nc/vo/pub/BusinessException.xsd"/>
+	<xsd:element name="updateNCSystemData">
+         <xsd:complexType>
+            <xsd:sequence>
+				<xsd:element name="string"  minOccurs="0" nillable="true" type="xsd:string"/>
+             </xsd:sequence>  
+         </xsd:complexType>
+     </xsd:element>
+	<xsd:element name="updateNCSystemDataResponse">
+         <xsd:complexType>
+            <xsd:sequence>
+				<xsd:element name="return"  minOccurs="0" nillable="true" type="xsd:string"/>
+             </xsd:sequence>  
+         </xsd:complexType>
+     </xsd:element>
+   </xsd:schema>
+</wsdl:types>
+    <wsdl:message name="updateNCSystemDataRequest">
+        <wsdl:part name="parameters"  element="ns0:updateNCSystemData"/>
+    </wsdl:message>
+    <wsdl:message name="updateNCSystemDataResponse">
+        <wsdl:part name="parameters"  element="ns0:updateNCSystemDataResponse"/>
+    </wsdl:message>
+    <wsdl:message name="BusinessException">
+        <wsdl:part name="BusinessException"  xmlns:businessException="http://pub.vo.nc/BusinessException"  element="businessException:BusinessException"/>
+    </wsdl:message>
+
+    <wsdl:portType name="IUpdateMidDataPortType">
+        <wsdl:operation name="updateNCSystemData">
+            <wsdl:input message="ns0:updateNCSystemDataRequest" wsaw:Action="urn:updateNCSystemData"/>
+            <wsdl:output message="ns0:updateNCSystemDataResponse" wsaw:Action="urn:updateNCSystemDataResponse"/>
+            <wsdl:fault name="BusinessException" message="ns0:BusinessException"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    
+    <wsdl:binding name="IUpdateMidDataSOAP11Binding" type="ns0:IUpdateMidDataPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="updateNCSystemData">
+            <soap:operation soapAction="urn:updateNCSystemData" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+     		<wsdl:fault name="BusinessException">
+        		<soap:fault name="BusinessException" use="literal"/>
+      		</wsdl:fault>
+
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="IUpdateMidData">
+        <wsdl:port name="IUpdateMidDataSOAP11port_http" binding="ns0:IUpdateMidDataSOAP11Binding">
+            <soap:address location="http://localhost/uapws/service/nc.ui.arap.itf.IUpdateMidData"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

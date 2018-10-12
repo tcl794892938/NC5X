@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<module>
+	<public>
+		<component singleton="true" remote="true" tx="CMT">
+			<interface>nc.itf.cmp.IUpdateData</interface>
+			<implementation>nc.impl.cmp.UpdateDataImpl</implementation>
+		</component>
+	</public>
+</module>

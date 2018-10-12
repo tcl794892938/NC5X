@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+xmlns:jaxws="http://java.sun.com/xml/ns/jaxws"
+jaxb:version="2.0"
+xmlns:ns0="http://service.ws.itf.nc/Pzcxtest"
+targetNamespace="http://service.ws.itf.nc/Pzcxtest">
+
+<jaxws:bindings>
+	<jaxws:package name="nc.itf.ws.service"/>
+</jaxws:bindings>
+
+<wsdl:types>
+   <xsd:schema xmlns:ns="http://service.ws.itf.nc/Pzcxtest"
+			xmlns:nclang="http://ws.uap.nc/lang"
+			attributeFormDefault="unqualified"
+			elementFormDefault="unqualified"
+			targetNamespace="http://service.ws.itf.nc/Pzcxtest" jaxb:version="2.0">
+	<xsd:annotation>
+    	<xsd:appinfo>
+   			<jaxb:schemaBindings>
+    			<jaxb:package name="nc.itf.ws.service"/>
+    		</jaxb:schemaBindings>
+   		</xsd:appinfo>
+   	</xsd:annotation>
+	 <xsd:import namespace="http://ws.uap.nc/lang" schemaLocation="/nc/uap/ws/lang.xsd"/>
+	<xsd:element name="qryPZ">
+         <xsd:complexType>
+            <xsd:sequence>
+				<xsd:element name="string"  minOccurs="0" nillable="true" type="xsd:string"/>
+             </xsd:sequence>  
+         </xsd:complexType>
+     </xsd:element>
+	<xsd:element name="qryPZResponse">
+         <xsd:complexType>
+            <xsd:sequence>
+				<xsd:element name="return"  minOccurs="0" nillable="true" type="xsd:string"/>
+             </xsd:sequence>  
+         </xsd:complexType>
+     </xsd:element>
+	<xsd:element name="doSendVoucherToNCSystem">
+         <xsd:complexType>
+            <xsd:sequence>
+				<xsd:element name="string"  minOccurs="0" nillable="true" type="xsd:string"/>
+             </xsd:sequence>  
+         </xsd:complexType>
+     </xsd:element>
+	<xsd:element name="doSendVoucherToNCSystemResponse">
+         <xsd:complexType>
+            <xsd:sequence>
+				<xsd:element name="return"  minOccurs="0" nillable="true" type="xsd:string"/>
+             </xsd:sequence>  
+         </xsd:complexType>
+     </xsd:element>
+	<xsd:element name="DeletePZ">
+         <xsd:complexType>
+            <xsd:sequence>
+				<xsd:element name="string"  minOccurs="0" nillable="true" type="xsd:string"/>
+             </xsd:sequence>  
+         </xsd:complexType>
+     </xsd:element>
+	<xsd:element name="DeletePZResponse">
+         <xsd:complexType>
+            <xsd:sequence>
+				<xsd:element name="return"  minOccurs="0" nillable="true" type="xsd:string"/>
+             </xsd:sequence>  
+         </xsd:complexType>
+     </xsd:element>
+   </xsd:schema>
+</wsdl:types>
+    <wsdl:message name="qryPZRequest">
+        <wsdl:part name="parameters"  element="ns0:qryPZ"/>
+    </wsdl:message>
+    <wsdl:message name="qryPZResponse">
+        <wsdl:part name="parameters"  element="ns0:qryPZResponse"/>
+    </wsdl:message>
+    <wsdl:message name="Exception">
+        <wsdl:part name="Exception"  xmlns:nclang="http://ws.uap.nc/lang"  element="nclang:Exception"/>
+    </wsdl:message>
+    <wsdl:message name="doSendVoucherToNCSystemRequest">
+        <wsdl:part name="parameters"  element="ns0:doSendVoucherToNCSystem"/>
+    </wsdl:message>
+    <wsdl:message name="doSendVoucherToNCSystemResponse">
+        <wsdl:part name="parameters"  element="ns0:doSendVoucherToNCSystemResponse"/>
+    </wsdl:message>
+    <wsdl:message name="DeletePZRequest">
+        <wsdl:part name="parameters"  element="ns0:DeletePZ"/>
+    </wsdl:message>
+    <wsdl:message name="DeletePZResponse">
+        <wsdl:part name="parameters"  element="ns0:DeletePZResponse"/>
+    </wsdl:message>
+
+    <wsdl:portType name="PzcxtestPortType">
+        <wsdl:operation name="qryPZ">
+            <wsdl:input message="ns0:qryPZRequest" wsaw:Action="urn:qryPZ"/>
+            <wsdl:output message="ns0:qryPZResponse" wsaw:Action="urn:qryPZResponse"/>
+            <wsdl:fault name="Exception" message="ns0:Exception"/>
+        </wsdl:operation>
+        <wsdl:operation name="doSendVoucherToNCSystem">
+            <wsdl:input message="ns0:doSendVoucherToNCSystemRequest" wsaw:Action="urn:doSendVoucherToNCSystem"/>
+            <wsdl:output message="ns0:doSendVoucherToNCSystemResponse" wsaw:Action="urn:doSendVoucherToNCSystemResponse"/>
+            <wsdl:fault name="Exception" message="ns0:Exception"/>
+        </wsdl:operation>
+        <wsdl:operation name="DeletePZ">
+            <wsdl:input message="ns0:DeletePZRequest" wsaw:Action="urn:DeletePZ"/>
+            <wsdl:output message="ns0:DeletePZResponse" wsaw:Action="urn:DeletePZResponse"/>
+            <wsdl:fault name="Exception" message="ns0:Exception"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    
+    <wsdl:binding name="PzcxtestSOAP11Binding" type="ns0:PzcxtestPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="qryPZ">
+            <soap:operation soapAction="urn:qryPZ" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+     		<wsdl:fault name="Exception">
+        		<soap:fault name="Exception" use="literal"/>
+      		</wsdl:fault>
+
+        </wsdl:operation>
+        <wsdl:operation name="doSendVoucherToNCSystem">
+            <soap:operation soapAction="urn:doSendVoucherToNCSystem" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+     		<wsdl:fault name="Exception">
+        		<soap:fault name="Exception" use="literal"/>
+      		</wsdl:fault>
+
+        </wsdl:operation>
+        <wsdl:operation name="DeletePZ">
+            <soap:operation soapAction="urn:DeletePZ" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+     		<wsdl:fault name="Exception">
+        		<soap:fault name="Exception" use="literal"/>
+      		</wsdl:fault>
+
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="Pzcxtest">
+        <wsdl:port name="PzcxtestSOAP11port_http" binding="ns0:PzcxtestSOAP11Binding">
+            <soap:address location="http://localhost/uapws/service/nc.itf.ws.service.Pzcxtest"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

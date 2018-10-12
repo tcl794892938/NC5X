@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<module>
+	<public>
+		<component name="updateMid">
+			<interface>nc.ui.arap.itf.IUpdateMidData</interface>
+			<implementation>nc.bs.arap.impl.UpdateMidDataImpl</implementation>
+			<extension class="nc.uap.ws.deploy.OxbWSExtensionProcessor">
+				<wsdl>/nc/ui/arap/itf/IUpdateMidData.wsdl</wsdl>
+				<address>/updateMid</address>
+			</extension>
+		</component>
+	</public>
+	<private>
+	</private>
+</module>

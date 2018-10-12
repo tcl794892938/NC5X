@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<module>
+	<public>
+		<component name="sendvoucherST">
+			<interface>nc.itf.ws.service.Pzcxtest</interface>
+			<implementation>nc.impl.ws.service.MobileServiceImpl</implementation>
+			<extension class="nc.uap.ws.deploy.OxbWSExtensionProcessor">
+				<wsdl>/nc/itf/ws/service/Pzcxtest.wsdl</wsdl>
+				<address>/sendvoucherST</address>
+			</extension>
+		</component>
+	</public>
+	<private>
+	</private>
+</module>

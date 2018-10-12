@@ -1,0 +1,19 @@
+#Tue Apr 18 11:05:08 CST 2017
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/resources=resources/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/src/client=modules/uap/client/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/src/cmp/client=modules/cmp/client/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/src/cmp/private=modules/cmp/META-INF/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/src/cmp/public=modules/cmp/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/src/erm/client=modules/erm/client/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/src/fts/client=modules/fts/client/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/src/gl/client=modules/gl/client/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/src/gl/private=modules/gl/META-INF/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/src/gl/public=modules/gl/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/src/obm/private=modules/obm/META-INF/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/src/private=modules/uap/META-INF/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/src/public=modules/uap/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/src/tbb/client=modules/tbb/client/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/src/test=
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/src/uap/client=modules/uap/client/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_anju/ws=
+eclipse.preferences.version=1

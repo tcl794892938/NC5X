@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+xmlns:jaxws="http://java.sun.com/xml/ns/jaxws"
+jaxb:version="2.0"
+xmlns:ns0="http://cmp.itf.nc/ISendVoucher"
+targetNamespace="http://cmp.itf.nc/ISendVoucher">
+
+<jaxws:bindings>
+	<jaxws:package name="nc.itf.cmp"/>
+</jaxws:bindings>
+
+<wsdl:types>
+   <xsd:schema xmlns:ns="http://cmp.itf.nc/ISendVoucher"
+			xmlns:businessException="http://pub.vo.nc/BusinessException"
+			attributeFormDefault="unqualified"
+			elementFormDefault="unqualified"
+			targetNamespace="http://cmp.itf.nc/ISendVoucher" jaxb:version="2.0">
+	<xsd:annotation>
+    	<xsd:appinfo>
+   			<jaxb:schemaBindings>
+    			<jaxb:package name="nc.itf.cmp"/>
+    		</jaxb:schemaBindings>
+   		</xsd:appinfo>
+   	</xsd:annotation>
+	 <xsd:import namespace="http://pub.vo.nc/BusinessException" schemaLocation="/nc/vo/pub/BusinessException.xsd"/>
+	<xsd:element name="doSendVoucherToNCSystem">
+         <xsd:complexType>
+            <xsd:sequence>
+				<xsd:element name="string"  minOccurs="0" nillable="true" type="xsd:string"/>
+             </xsd:sequence>  
+         </xsd:complexType>
+     </xsd:element>
+	<xsd:element name="doSendVoucherToNCSystemResponse">
+         <xsd:complexType>
+            <xsd:sequence>
+				<xsd:element name="return"  minOccurs="0" nillable="true" type="xsd:string"/>
+             </xsd:sequence>  
+         </xsd:complexType>
+     </xsd:element>
+	<xsd:element name="getZJZFYSBugetFromNCSystem">
+         <xsd:complexType>
+            <xsd:sequence>
+				<xsd:element name="string"  minOccurs="0" nillable="true" type="xsd:string"/>
+             </xsd:sequence>  
+         </xsd:complexType>
+     </xsd:element>
+	<xsd:element name="getZJZFYSBugetFromNCSystemResponse">
+         <xsd:complexType>
+            <xsd:sequence>
+				<xsd:element name="return"  minOccurs="0" nillable="true" type="xsd:string"/>
+             </xsd:sequence>  
+         </xsd:complexType>
+     </xsd:element>
+	<xsd:element name="getFYBXYSBugetFromNCSystem">
+         <xsd:complexType>
+            <xsd:sequence>
+				<xsd:element name="string"  minOccurs="0" nillable="true" type="xsd:string"/>
+             </xsd:sequence>  
+         </xsd:complexType>
+     </xsd:element>
+	<xsd:element name="getFYBXYSBugetFromNCSystemResponse">
+         <xsd:complexType>
+            <xsd:sequence>
+				<xsd:element name="return"  minOccurs="0" nillable="true" type="xsd:string"/>
+             </xsd:sequence>  
+         </xsd:complexType>
+     </xsd:element>
+   </xsd:schema>
+</wsdl:types>
+    <wsdl:message name="doSendVoucherToNCSystemRequest">
+        <wsdl:part name="parameters"  element="ns0:doSendVoucherToNCSystem"/>
+    </wsdl:message>
+    <wsdl:message name="doSendVoucherToNCSystemResponse">
+        <wsdl:part name="parameters"  element="ns0:doSendVoucherToNCSystemResponse"/>
+    </wsdl:message>
+    <wsdl:message name="BusinessException">
+        <wsdl:part name="BusinessException"  xmlns:businessException="http://pub.vo.nc/BusinessException"  element="businessException:BusinessException"/>
+    </wsdl:message>
+    <wsdl:message name="getZJZFYSBugetFromNCSystemRequest">
+        <wsdl:part name="parameters"  element="ns0:getZJZFYSBugetFromNCSystem"/>
+    </wsdl:message>
+    <wsdl:message name="getZJZFYSBugetFromNCSystemResponse">
+        <wsdl:part name="parameters"  element="ns0:getZJZFYSBugetFromNCSystemResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getFYBXYSBugetFromNCSystemRequest">
+        <wsdl:part name="parameters"  element="ns0:getFYBXYSBugetFromNCSystem"/>
+    </wsdl:message>
+    <wsdl:message name="getFYBXYSBugetFromNCSystemResponse">
+        <wsdl:part name="parameters"  element="ns0:getFYBXYSBugetFromNCSystemResponse"/>
+    </wsdl:message>
+
+    <wsdl:portType name="ISendVoucherPortType">
+        <wsdl:operation name="doSendVoucherToNCSystem">
+            <wsdl:input message="ns0:doSendVoucherToNCSystemRequest" wsaw:Action="urn:doSendVoucherToNCSystem"/>
+            <wsdl:output message="ns0:doSendVoucherToNCSystemResponse" wsaw:Action="urn:doSendVoucherToNCSystemResponse"/>
+            <wsdl:fault name="BusinessException" message="ns0:BusinessException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getZJZFYSBugetFromNCSystem">
+            <wsdl:input message="ns0:getZJZFYSBugetFromNCSystemRequest" wsaw:Action="urn:getZJZFYSBugetFromNCSystem"/>
+            <wsdl:output message="ns0:getZJZFYSBugetFromNCSystemResponse" wsaw:Action="urn:getZJZFYSBugetFromNCSystemResponse"/>
+            <wsdl:fault name="BusinessException" message="ns0:BusinessException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getFYBXYSBugetFromNCSystem">
+            <wsdl:input message="ns0:getFYBXYSBugetFromNCSystemRequest" wsaw:Action="urn:getFYBXYSBugetFromNCSystem"/>
+            <wsdl:output message="ns0:getFYBXYSBugetFromNCSystemResponse" wsaw:Action="urn:getFYBXYSBugetFromNCSystemResponse"/>
+            <wsdl:fault name="BusinessException" message="ns0:BusinessException"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    
+    <wsdl:binding name="ISendVoucherSOAP11Binding" type="ns0:ISendVoucherPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="doSendVoucherToNCSystem">
+            <soap:operation soapAction="urn:doSendVoucherToNCSystem" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+     		<wsdl:fault name="BusinessException">
+        		<soap:fault name="BusinessException" use="literal"/>
+      		</wsdl:fault>
+
+        </wsdl:operation>
+        <wsdl:operation name="getZJZFYSBugetFromNCSystem">
+            <soap:operation soapAction="urn:getZJZFYSBugetFromNCSystem" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+     		<wsdl:fault name="BusinessException">
+        		<soap:fault name="BusinessException" use="literal"/>
+      		</wsdl:fault>
+
+        </wsdl:operation>
+        <wsdl:operation name="getFYBXYSBugetFromNCSystem">
+            <soap:operation soapAction="urn:getFYBXYSBugetFromNCSystem" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+     		<wsdl:fault name="BusinessException">
+        		<soap:fault name="BusinessException" use="literal"/>
+      		</wsdl:fault>
+
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ISendVoucher">
+        <wsdl:port name="ISendVoucherSOAP11port_http" binding="ns0:ISendVoucherSOAP11Binding">
+            <soap:address location="http://localhost/uapws/service/nc.itf.cmp.ISendVoucher"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
