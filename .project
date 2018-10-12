@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>Proj_bxtg</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>nc.uap.mde.ModuleBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>nc.uap.mde.ModuleProjectNature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>NC_HOME</name>
+			<type>2</type>
+			<locationURI>FIELD_NC_HOME</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>

@@ -1,0 +1,14 @@
+#Thu Jun 04 11:11:33 CST 2015
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_bxtg/resources=resources/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_bxtg/src/arap/client=modules/arap/client/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_bxtg/src/arap/private=modules/arap/META-INF/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_bxtg/src/arap/public=modules/arap/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_bxtg/src/client=modules/uap/client/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_bxtg/src/private=modules/uap/META-INF/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_bxtg/src/public=modules/uap/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_bxtg/src/test=
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_bxtg/src/uap/client=modules/uap/client/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_bxtg/src/uap/private=modules/uap/META-INF/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_bxtg/src/uap/public=modules/uap/classes/
+NCPatchPropertyStore.SOURCE_DEST_LOCATION_KEY///Proj_bxtg/src/uapbd/client=modules/uapbd/client/classes/
+eclipse.preferences.version=1

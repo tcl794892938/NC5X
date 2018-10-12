@@ -1,0 +1,7 @@
+<root>
+	<url>jdbc:oracle:thin:@</url>
+	<url2>:1521:orcl</url2>
+	<ip>yueruan.xicp.net</ip>
+	<user>bxgt_1</user>
+	<password>1</password>
+</root>
